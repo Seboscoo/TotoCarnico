@@ -115,7 +115,7 @@ with st.form("form_totocalcio"):
 # ---  SEZIONE 4 (SALVATAGGIO) CON QUESTA ---
     if pulsante_invio:
         if nome_giocatore.strip() == "":
-            st.warning("Ma sei scemo? dedi inserire il nome COGLIONE")
+            st.warning("Ma sei scemo? devi inserire il nome COGLIONE")
         else:
             # URL per l'invio (abbiamo cambiato 'viewform' in 'formResponse')
             url_form = "https://docs.google.com/forms/d/e/1FAIpQLSe4qwxFjLYQ-nxenG7cEIcRd4fSukdeUbtmZXL6laQ6VN4iKQ/formResponse"
