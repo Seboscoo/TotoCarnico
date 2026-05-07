@@ -88,8 +88,8 @@ else:
     df_partite = pd.read_csv(FILE_SCHEDINA)
 
 # --- 3. IL FORM PER I PRONOSTICI ---
-st.header("La Schedina della Settimana")
-
+st.header("La Schedina della Settimana Prima Giornata")
+st.caption("Made By Esseba")
 with st.form("form_totocalcio"):
     nome_giocatore = st.text_input("Inserisci il tuo Nome")
     st.write("Seleziona 1, X, o 2 per ogni partita")
