@@ -140,7 +140,6 @@ with st.form("form_totocalcio"):
             }
             
             try:
-               try:
                 # Diciamo a Google che siamo un browser normale
                 headers = {'Content-Type': 'application/x-www-form-urlencoded'}
                 
@@ -150,6 +149,7 @@ with st.form("form_totocalcio"):
                 # Google Form spesso risponde con codice 302 o 200 se ha successo
                 if risposta.status_code == 200:
                     st.success(f"Grazie Mille {nome_giocatore}, pronostici inviati")
+                    st.balloons()
                 else:
                     # Se fallisce, stampiamo l'errore esatto per capire cosa succede
                     st.error(f"Errore tecnico (Codice {risposta.status_code}).")
