@@ -115,7 +115,7 @@ with st.form("form_totocalcio"):
 # ---  SEZIONE 4 (SALVATAGGIO) CON QUESTA ---
     if pulsante_invio:
         if nome_giocatore.strip() == "":
-            st.warning("Ehi! Devi inserire il tuo nome per partecipare.")
+            st.warning("Ma sei stupido? Devi inserire il nome Coglione")
         else:
             try:
                 # Connessione al foglio Google
