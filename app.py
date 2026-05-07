@@ -4,7 +4,22 @@ import pandas as pd
 from io import StringIO
 import random
 import os
+# Definiamo il percorso del logo (quello che hai messo nella cartella)
+FILE_LOGO = "logo.webp"
 
+# Creiamo tre colonne. Quella centrale ospiterà il logo, 
+# quelle laterali (vuote) servono per centrarlo.
+col1, col2, col3 = st.columns([1, 2, 1]) 
+
+# Se il file del logo esiste, lo mostriamo nella colonna centrale
+if os.path.exists(FILE_LOGO):
+    with col2:
+        # width=400 è un buon compromesso per pc e mobile, aggiustalo se serve
+        st.image(FILE_LOGO, width=400) 
+else:
+    # Se per qualche motivo il logo manca, mostriamo un avviso
+    # (solo sul tuo pc, i tuoi amici vedranno il logo online)
+    st.info("⚠️ Logo 'logo.png' non trovato nella cartella. Ma online funzionerà se l'hai caricato su GitHub.")
 st.title("Totocalcio Carnico ")
 st.write("Inserisci i tuoi pronostici.")
 
