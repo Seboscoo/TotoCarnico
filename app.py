@@ -115,29 +115,36 @@ with st.form("form_totocalcio"):
 # ---  SEZIONE 4 (SALVATAGGIO) CON QUESTA ---
     if pulsante_invio:
         if nome_giocatore.strip() == "":
-            st.warning("Ma sei Coglione? Devi INserire il nome stupido scemo")
+            st.warning("Ma sei scemo? dedi inserire il nome COGLIONE")
         else:
+            # URL per l'invio (abbiamo cambiato 'viewform' in 'formResponse')
+            url_form = "https://docs.google.com/forms/d/e/1FAIpQLSe4qwxFjLYQ-nxenG7cEIcRd4fSukdeUbtmZXL6laQ6VN4iKQ/formResponse"
+            
+            # Mappatura dei campi basata sul tuo link precompilato
+            # Ho aggiunto i codici mancanti seguendo la logica di Google Forms
+            form_data = {
+                "entry.209404488": nome_giocatore,
+                "entry.1501733804": pronostici_fatti[0],  # P1
+                "entry.2143684766": pronostici_fatti[1],  # P2
+                "entry.328672958": pronostici_fatti[2],   # P3
+                "entry.1212089018": pronostici_fatti[3],  # P4
+                "entry.607174665": pronostici_fatti[4],   # P5 (estrapolato)
+                "entry.1837330761": pronostici_fatti[5],  # P6
+                "entry.1235688537": pronostici_fatti[6],  # P7
+                "entry.174828330": pronostici_fatti[7],   # P8
+                "entry.1384370211": pronostici_fatti[8],  # P9
+                "entry.1843187216": pronostici_fatti[9],  # P10
+                "entry.1645068225": pronostici_fatti[10], # P11
+                "entry.1017385966": pronostici_fatti[11], # P12
+                "entry.1306352924": pronostici_fatti[12], # P13
+            }
+            
             try:
-                conn = st.connection("gsheets", type=GSheetsConnection)
-                
-                # Prepariamo la riga
-                nuova_giocata = {"Giocatore": nome_giocatore}
-                for i, p in enumerate(df_partite["Partite"]):
-                    nuova_giocata[f"Partita {i+1}"] = pronostici_fatti[i]
-                
-                df_nuovo_record = pd.DataFrame([nuova_giocata])
-
-                # Proviamo a leggere i dati esistenti, se fallisce creiamo da zero
-                try:
-                    df_esistente = conn.read(worksheet="Foglio1", ttl=0).dropna(how="all")
-                    df_finale = pd.concat([df_esistente, df_nuovo_record], ignore_index=True)
-                except:
-                    df_finale = df_nuovo_record
-
-                # AGGIORNAMENTO FORZATO
-                conn.update(worksheet="Foglio1", data=df_finale)
-                
-                st.success(f"Grazie Mille {nome_giocatore}, giocata salvata")
+                # Invio silenzioso dei dati
+                risposta = requests.post(url_form, data=form_data)
+                if risposta.status_code == 200:
+                    st.success(f"Grazie Mille {nome_giocatore}, pronostici salvati")
+                else:
+                    st.error("C'è stato un problema con l'invio. Riprova tra un minuto.")
             except Exception as e:
-                st.error(f"Errore tecnico: {e}")
-                st.info("Controlla di aver dato i permessi di 'Editor' a 'Chiunque abbia il link' su Google Sheets.")
+                st.error(f"Errore di connessione: {e}")
