@@ -58,9 +58,9 @@ def estrai_partite(url):
 # --- 2. GESTIONE DELLA SCHEDINA SETTIMANALE ---
 FILE_SCHEDINA = "schedina_settimana.csv"
 
-URL_PRIMA = "https://www.carnico.it/calendario/prima-categoria/?giornata=quarta-giornata-prima-categoria"
-URL_SECONDA = "https://www.carnico.it/calendario/seconda-categoria/?giornata=quarta-giornata-seconda-categoria"
-URL_TERZA = "https://www.carnico.it/calendario/terza-categoria/?giornata=quarta-giornata-terza-categoria"
+URL_PRIMA = "https://www.carnico.it/calendario/prima-categoria/?giornata=prima-giornata-prima-categoria"
+URL_SECONDA = "https://www.carnico.it/calendario/seconda-categoria/?giornata=prima-giornata-seconda-categoria"
+URL_TERZA = "https://www.carnico.it/calendario/terza-categoria/?giornata=prima-giornata-terza-categoria"
 
 if not os.path.exists(FILE_SCHEDINA):
     st.info("Sto generando la nuova schedina della settimana...")
