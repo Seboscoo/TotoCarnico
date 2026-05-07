@@ -118,7 +118,7 @@ with st.form("form_totocalcio"):
             st.warning("Ma sei scemo? devi inserire il nome COGLIONE")
         else:
             # URL per l'invio (abbiamo cambiato 'viewform' in 'formResponse')
-            url_form = "https://docs.google.com/forms/d/e/1FAIpQLSe4qwxFjLYQ-nxenG7cEIcRd4fSukdeUbtmZXL6laQ6VN4iKQ/formResponse"
+          url_form = "https://docs.google.com/forms/d/e/1FAIpQLSe4qwxFjLYQ-nxenG7cEIcRd4fSukdeUbtmZXL6laQ6VN4iKQ/formResponse"
             
             # Mappatura dei campi basata sul tuo link precompilato
             # Ho aggiunto i codici mancanti seguendo la logica di Google Forms
