@@ -140,11 +140,19 @@ with st.form("form_totocalcio"):
             }
             
             try:
-                # Invio silenzioso dei dati
-                risposta = requests.post(url_form, data=form_data)
+               try:
+                # Diciamo a Google che siamo un browser normale
+                headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+                
+                # Invio dei dati
+                risposta = requests.post(url_form, data=form_data, headers=headers)
+                
+                # Google Form spesso risponde con codice 302 o 200 se ha successo
                 if risposta.status_code == 200:
-                    st.success(f"Grazie Mille {nome_giocatore}, pronostici salvati")
+                    st.success(f"Grazie Mille {nome_giocatore}, pronostici inviati")
                 else:
-                    st.error("C'è stato un problema con l'invio. Riprova tra un minuto.")
+                    # Se fallisce, stampiamo l'errore esatto per capire cosa succede
+                    st.error(f"Errore tecnico (Codice {risposta.status_code}).")
+                    st.info("Verifica che il modulo Google non abbia il 'Limite di 1 risposta' attivo.")
             except Exception as e:
                 st.error(f"Errore di connessione: {e}")
