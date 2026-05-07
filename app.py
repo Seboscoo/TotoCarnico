@@ -115,24 +115,29 @@ with st.form("form_totocalcio"):
 # ---  SEZIONE 4 (SALVATAGGIO) CON QUESTA ---
     if pulsante_invio:
         if nome_giocatore.strip() == "":
-            st.warning("Ma sei stupido? Devi inserire il nome Coglione")
+            st.warning("Ma sei Coglione? Devi INserire il nome stupido scemo")
         else:
             try:
-                # Connessione al foglio Google
                 conn = st.connection("gsheets", type=GSheetsConnection)
                 
-                # Leggiamo i dati esistenti
-                df_esistente = conn.read(worksheet="Foglio1", ttl=0)
-                
-                # Prepariamo la nuova riga
+                # Prepariamo la riga
                 nuova_giocata = {"Giocatore": nome_giocatore}
                 for i, p in enumerate(df_partite["Partite"]):
                     nuova_giocata[f"Partita {i+1}"] = pronostici_fatti[i]
                 
-                # Aggiungiamo la nuova riga al foglio
-                df_nuovo = pd.concat([df_esistente, pd.DataFrame([nuova_giocata])], ignore_index=True)
-                conn.update(worksheet="Foglio1", data=df_nuovo)
+                df_nuovo_record = pd.DataFrame([nuova_giocata])
+
+                # Proviamo a leggere i dati esistenti, se fallisce creiamo da zero
+                try:
+                    df_esistente = conn.read(worksheet="Foglio1", ttl=0).dropna(how="all")
+                    df_finale = pd.concat([df_esistente, df_nuovo_record], ignore_index=True)
+                except:
+                    df_finale = df_nuovo_record
+
+                # AGGIORNAMENTO FORZATO
+                conn.update(worksheet="Foglio1", data=df_finale)
                 
                 st.success(f"Grazie Mille {nome_giocatore}, giocata salvata")
             except Exception as e:
-                st.error(f"Errore nel salvataggio su Google Sheets: {e}")
+                st.error(f"Errore tecnico: {e}")
+                st.info("Controlla di aver dato i permessi di 'Editor' a 'Chiunque abbia il link' su Google Sheets.")
