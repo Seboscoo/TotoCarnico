@@ -128,15 +128,15 @@ with st.form("form_totocalcio"):
                 "entry.2143684766": pronostici_fatti[1],  # P2
                 "entry.328672958": pronostici_fatti[2],   # P3
                 "entry.1212089018": pronostici_fatti[3],  # P4
-                "entry.607174665": pronostici_fatti[4],   # P5 (estrapolato)
-                "entry.1837330761": pronostici_fatti[5],  # P6
-                "entry.1235688537": pronostici_fatti[6],  # P7
-                "entry.174828330": pronostici_fatti[7],   # P8
-                "entry.1384370211": pronostici_fatti[8],  # P9
-                "entry.1843187216": pronostici_fatti[9],  # P10
-                "entry.1645068225": pronostici_fatti[10], # P11
-                "entry.1017385966": pronostici_fatti[11], # P12
-                "entry.1306352924": pronostici_fatti[12], # P13
+                "entry.1836274014": pronostici_fatti[4],  # P5
+                "entry.805664275": pronostici_fatti[5],   # P6
+                "entry.1475285346": pronostici_fatti[6],  # P7
+                "entry.1518268040": pronostici_fatti[7],  # P8
+                "entry.510699695": pronostici_fatti[8],   # P9
+                "entry.497013538": pronostici_fatti[9],   # P10
+                "entry.186611401": pronostici_fatti[10],  # P11
+                "entry.158458027": pronostici_fatti[11],  # P12
+                "entry.1445830973": pronostici_fatti[12], # P13
             }
             
             try:
