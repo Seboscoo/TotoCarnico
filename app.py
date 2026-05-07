@@ -4,7 +4,6 @@ import pandas as pd
 from io import StringIO
 import random
 import os
-from streamlit_gsheets import GSheetsConnection
 # Definiamo il percorso del logo (quello che hai messo nella cartella)
 FILE_LOGO = "logo.webp"
 
