@@ -4,6 +4,7 @@ import pandas as pd
 from io import StringIO
 import random
 import os
+from streamlit_gsheets import GSheetsConnection
 # Definiamo il percorso del logo (quello che hai messo nella cartella)
 FILE_LOGO = "logo.webp"
 
@@ -110,25 +111,28 @@ with st.form("form_totocalcio"):
         st.markdown("---") # Aggiunge una linea di separazione elegante
         
     pulsante_invio = st.form_submit_button("Invia Giocata Definitiva")
-    
-    # --- 4. SALVATAGGIO DEI DATI ---
+  
+# ---  SEZIONE 4 (SALVATAGGIO) CON QUESTA ---
     if pulsante_invio:
         if nome_giocatore.strip() == "":
-            st.warning("Devi inserire il tuo nome per partecipare stupido.")
+            st.warning("Ehi! Devi inserire il tuo nome per partecipare.")
         else:
-            risultato_utente = {"Giocatore": nome_giocatore}
-            
-            # Ricostruiamo la lista di tutte le partite nell'ordine giusto
-            tutte_le_partite_ordinate = df_partite["Partite"].tolist()
-            for i, p in enumerate(tutte_le_partite_ordinate):
-                risultato_utente[p] = pronostici_fatti[i]
-            
-            df_risultato = pd.DataFrame([risultato_utente])
-            FILE_RISULTATI = "giocate_segrete.csv"
-            
-            if not os.path.exists(FILE_RISULTATI):
-                df_risultato.to_csv(FILE_RISULTATI, index=False)
-            else:
-                df_risultato.to_csv(FILE_RISULTATI, mode='a', header=False, index=False)
+            try:
+                # Connessione al foglio Google
+                conn = st.connection("gsheets", type=GSheetsConnection)
                 
-            st.success(f"Grazie Mille {nome_giocatore},  ")
+                # Leggiamo i dati esistenti
+                df_esistente = conn.read(worksheet="Foglio1", ttl=0)
+                
+                # Prepariamo la nuova riga
+                nuova_giocata = {"Giocatore": nome_giocatore}
+                for i, p in enumerate(df_partite["Partite"]):
+                    nuova_giocata[f"Partita {i+1}"] = pronostici_fatti[i]
+                
+                # Aggiungiamo la nuova riga al foglio
+                df_nuovo = pd.concat([df_esistente, pd.DataFrame([nuova_giocata])], ignore_index=True)
+                conn.update(worksheet="Foglio1", data=df_nuovo)
+                
+                st.success(f"Grazie Mille {nome_giocatore}, giocata salvata")
+            except Exception as e:
+                st.error(f"Errore nel salvataggio su Google Sheets: {e}")
