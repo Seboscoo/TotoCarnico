@@ -96,7 +96,7 @@ st.caption("Made By Esseba")
 
 # --- IMPOSTA QUI LA DATA DI SCADENZA ---
 # Esempio: 10 Maggio 2026 alle ore 14:30
-scadenza = datetime(2026, 5, 8, 9, 30, tzinfo=ZoneInfo("Europe/Rome"))
+scadenza = datetime(2026, 5, 9, 16, 30, tzinfo=ZoneInfo("Europe/Rome"))
 adesso = datetime.now(ZoneInfo("Europe/Rome"))
 
 # CONTROLLO ORARIO
