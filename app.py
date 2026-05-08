@@ -4,6 +4,8 @@ import pandas as pd
 from io import StringIO
 import random
 import os
+from datetime import datetime
+from zoneinfo import ZoneInfo
 # Definiamo il percorso del logo (quello che hai messo nella cartella)
 FILE_LOGO = "logo.webp"
 
@@ -88,69 +90,77 @@ else:
     df_partite = pd.read_csv(FILE_SCHEDINA)
 
 # --- 3. IL FORM PER I PRONOSTICI ---
+# --- 3. IL FORM PER I PRONOSTICI CON SCADENZA AUTOMATICA ---
 st.header("La Schedina della Settimana Prima Giornata")
 st.caption("Made By Esseba")
-with st.form("form_totocalcio"):
-    nome_giocatore = st.text_input("Inserisci il tuo Nome")
-    st.write("Seleziona 1, X, o 2 per ogni partita")
-    
-    pronostici_fatti = []
-    
-    # NUOVA LOGICA: Dividiamo visivamente le categorie
-    for cat in ["Prima Categoria", "Seconda Categoria", "Terza Categoria"]:
-        st.subheader(f" {cat}")
+
+# --- IMPOSTA QUI LA DATA DI SCADENZA ---
+# Esempio: 10 Maggio 2026 alle ore 14:30
+scadenza = datetime(2026, 5, 8, 9, 30, tzinfo=ZoneInfo("Europe/Rome"))
+adesso = datetime.now(ZoneInfo("Europe/Rome"))
+
+# CONTROLLO ORARIO
+if adesso < scadenza:
+    # Se siamo in tempo, mostriamo il modulo
+    with st.form("form_totocalcio"):
+        nome_giocatore = st.text_input("Inserisci il tuo Nome")
+        st.write("Seleziona 1, X, o 2 per ogni partita")
         
-        # Filtriamo solo le partite di questa categoria
-        partite_categoria = df_partite[df_partite["Categoria"] == cat]["Partite"]
+        pronostici_fatti = []
         
-        for partita in partite_categoria:
-            scelta = st.radio(partita, ["1", "X", "2"], horizontal=True)
-            pronostici_fatti.append(scelta)
+        # Dividiamo visivamente le categorie
+        for cat in ["Prima Categoria", "Seconda Categoria", "Terza Categoria"]:
+            st.subheader(f" {cat}")
             
-        st.markdown("---") # Aggiunge una linea di separazione elegante
-        
-    pulsante_invio = st.form_submit_button("Invia Giocata Definitiva")
-  
-# ---  SEZIONE 4 (SALVATAGGIO) CON QUESTA ---
-    if pulsante_invio:
-        if nome_giocatore.strip() == "":
-            st.warning("Ma sei scemo? devi inserire il nome COGLIONE")
-        else:
-            # URL per l'invio (abbiamo cambiato 'viewform' in 'formResponse')
-            url_form = "https://docs.google.com/forms/d/e/1FAIpQLSe4qwxFjLYQ-nxenG7cEIcRd4fSukdeUbtmZXL6laQ6VN4iKQ/formResponse"
+            # Filtriamo solo le partite di questa categoria
+            partite_categoria = df_partite[df_partite["Categoria"] == cat]["Partite"]
             
-            # Mappatura dei campi basata sul tuo link precompilato
-            # Ho aggiunto i codici mancanti seguendo la logica di Google Forms
-            form_data = {
-                "entry.209404488": nome_giocatore,
-                "entry.1501733804": pronostici_fatti[0],  # P1
-                "entry.2143684766": pronostici_fatti[1],  # P2
-                "entry.328672958": pronostici_fatti[2],   # P3
-                "entry.1212089018": pronostici_fatti[3],  # P4
-                "entry.1836274014": pronostici_fatti[4],  # P5
-                "entry.805664275": pronostici_fatti[5],   # P6
-                "entry.1475285346": pronostici_fatti[6],  # P7
-                "entry.1518268040": pronostici_fatti[7],  # P8
-                "entry.510699695": pronostici_fatti[8],   # P9
-                "entry.497013538": pronostici_fatti[9],   # P10
-                "entry.186611401": pronostici_fatti[10],  # P11
-                "entry.158458027": pronostici_fatti[11],  # P12
-                "entry.1445830973": pronostici_fatti[12], # P13
-            }
-            
-            try:
-                # Diciamo a Google che siamo un browser normale
-                headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+            for partita in partite_categoria:
+                scelta = st.radio(partita, ["1", "X", "2"], horizontal=True, key=partita)
+                pronostici_fatti.append(scelta)
                 
-                # Invio dei dati
-                risposta = requests.post(url_form, data=form_data, headers=headers)
+            st.markdown("---")
+            
+        pulsante_invio = st.form_submit_button("Invia Giocata Definitiva")
+      
+        # --- SEZIONE 4: INVIO DATI (dentro il form) ---
+        if pulsante_invio:
+            if nome_giocatore.strip() == "":
+                st.warning("Ma sei scemo? devi inserire il nome!")
+            else:
+                url_form = "https://docs.google.com/forms/d/e/1FAIpQLSe4qwxFjLYQ-nxenG7cEIcRd4fSukdeUbtmZXL6laQ6VN4iKQ/formResponse"
                 
-                # Google Form spesso risponde con codice 302 o 200 se ha successo
-                if risposta.status_code == 200:
-                    st.success(f"Grazie Mille {nome_giocatore}, pronostici inviati")
-                else:
-                    # Se fallisce, stampiamo l'errore esatto per capire cosa succede
-                    st.error(f"Errore tecnico (Codice {risposta.status_code}).")
-                    st.info("Verifica che il modulo Google non abbia il 'Limite di 1 risposta' attivo.")
-            except Exception as e:
-                st.error(f"Errore di connessione: {e}")
+                form_data = {
+                    "entry.209404488": nome_giocatore,
+                    "entry.1501733804": pronostici_fatti[0],
+                    "entry.2143684766": pronostici_fatti[1],
+                    "entry.328672958": pronostici_fatti[2],
+                    "entry.1212089018": pronostici_fatti[3],
+                    "entry.1836274014": pronostici_fatti[4],
+                    "entry.805664275": pronostici_fatti[5],
+                    "entry.1475285346": pronostici_fatti[6],
+                    "entry.1518268040": pronostici_fatti[7],
+                    "entry.510699695": pronostici_fatti[8],
+                    "entry.497013538": pronostici_fatti[9],
+                    "entry.186611401": pronostici_fatti[10],
+                    "entry.158458027": pronostici_fatti[11],
+                    "entry.1445830973": pronostici_fatti[12],
+                }
+                
+                try:
+                    headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+                    risposta = requests.post(url_form, data=form_data, headers=headers)
+                    
+                    if risposta.status_code == 200:
+                        st.success(f"Grazie Mille {nome_giocatore}, pronostici inviati!")
+                        st.balloons()
+                    else:
+                        st.error(f"Errore tecnico (Codice {risposta.status_code}).")
+                except Exception as e:
+                    st.error(f"Errore di connessione: {e}")
+
+else:
+    # --- COSA SUCCEDE SE IL TEMPO È SCADUTO ---
+    st.error(" LE GIOCATE SONO CHIUSE!")
+    st.info(f"Il termine per l'invio era il {scadenza.strftime('%d/%m/%Y alle %H:%M')}.")
+    st.write("Per questa giornata hai perso 2€")
