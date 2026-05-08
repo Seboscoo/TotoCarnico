@@ -153,9 +153,21 @@ if adesso < scadenza:
                     
                     if risposta.status_code == 200:
                         st.success(f"Grazie Mille {nome_giocatore}, pronostici inviati!")
-                        st.balloons()
+                        # --- INIZIO SCONTRINO VIRTUALE ---
+                    st.markdown("###  La Tua Giocata")
+                    st.info("Fai uno screenshot di questa schermata e non rompere il cazzo")
+                    
+                    # Creiamo una tabella elegante unendo le partite ai pronostici scelti
+                    df_riepilogo = pd.DataFrame({
+                        "Partita": df_partite["Partite"],
+                        "Il tuo Pronostico": pronostici_fatti
+                    })
+                    
+                    # st.table mostra una tabella fissa, perfetta per gli screenshot
+                    st.table(df_riepilogo)
+                    # --- FINE SCONTRINO VIRTUALE ---
                     else:
-                        st.error(f"Errore tecnico (Codice {risposta.status_code}).")
+                    st.error(f"Errore tecnico (Codice {risposta.status_code}).")
                 except Exception as e:
                     st.error(f"Errore di connessione: {e}")
 
