@@ -10,22 +10,33 @@ from zoneinfo import ZoneInfo
 FILE_LOGO = "logo.webp"
 # INCOLLA QUI IL LINK CSV DEL TUO FOGLIO GOOGLE
 LINK_CSV_FOGLIO = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTMNpU0j7ZM0EACZxO2-SfHpPKnXxe7rXSsa0D4pptqecMvW-2LBW771Cov0XUib0ZDc2D1k_IEc0tk/pub?gid=1209485560&single=true&output=csv"
-
 def recupera_vecchia_giocata(nome_cercato):
     try:
-        df_risposte = pd.read_csv(LINK_CSV_FOGLIO)
-        df_risposte['Nome Giocatore'] = df_risposte['Nome Giocatore'].astype(str).str.strip().lower()
-
-        # Trova l'ultima giocata di questo nome
-        giocata_utente = df_risposte[df_risposte['Nome Giocatore'] == nome_cercato.strip().lower()].iloc[-1]
-
-        # Estrae i segni da "Partita 1" a "Partita 13"
+        # skiprows=4 fa partire la lettura dalla riga 5 (dove ci sono i tuoi nuovi nomi)
+        df_risposte = pd.read_csv(LINK_CSV_FOGLIO, skiprows=4)
+        
+        # Cerca la colonna "nome" (assicurati di averla chiamata esattamente così sul foglio)
+        df_risposte['Nome'] = df_risposte['Nome'].astype(str).str.strip().lower()
+        
+        # Trova l'ultima riga corrispondente al giocatore
+        giocata_utente = df_risposte[df_risposte['Nome'] == nome_cercato.strip().lower()].iloc[-1]
+        
+        # Estrae i 13 segni, cercando le colonne da "partita 1" a "partita 13"
         vecchi_segni = []
         for i in range(1, 14):
-            vecchi_segni.append(str(giocata_utente[f'Partita {i}']))
+            segno = str(giocata_utente[f'Partita {i}'])
+            
+            # Pulisce eventuali celle vuote
+            if segno.lower() == 'nan':
+                segno = ""
+                
+            vecchi_segni.append(segno)
+            
         return vecchi_segni
-    except:
+    except Exception as e:
+        # Se non trova il nome o c'è un errore, restituisce None
         return None
+
 # Creiamo tre colonne. Quella centrale ospiterà il logo, 
 # quelle laterali (vuote) servono per centrarlo.
 col1, col2, col3 = st.columns([1, 2, 1]) 
