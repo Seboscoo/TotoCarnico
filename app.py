@@ -15,7 +15,7 @@ def recupera_vecchia_giocata(nome_cercato):
         # skiprows=4 fa partire la lettura dalla riga 5
         df_risposte = pd.read_csv(LINK_CSV_FOGLIO, skiprows=4)
         
-        # Trasforma i nomi in minuscolo
+        # Trasforma i nomi delle colonne in minuscolo
         df_risposte.columns = df_risposte.columns.astype(str).str.strip().str.lower()
         
         # 1. CONTROLLO COLONNA NOME
@@ -23,7 +23,8 @@ def recupera_vecchia_giocata(nome_cercato):
             st.error(f"🕵️ ERRORE FOGLIO: Non trovo la colonna 'nome'. Python sta leggendo queste colonne: {list(df_risposte.columns)}")
             return None
             
-        df_risposte['nome'] = df_risposte['nome'].astype(str).str.strip().lower()
+        # --- QUI HO CORRETTO L'ERRORE (aggiunto .str prima di .lower()) ---
+        df_risposte['nome'] = df_risposte['nome'].astype(str).str.strip().str.lower()
         
         # Filtriamo le righe corrispondenti al giocatore
         giocate_trovate = df_risposte[df_risposte['nome'] == nome_cercato.strip().lower()]
@@ -53,10 +54,9 @@ def recupera_vecchia_giocata(nome_cercato):
         return vecchi_segni
         
     except Exception as e:
-        # 3. CONTROLLO ERRORI TECNICI GENERARLI
+        # 3. CONTROLLO ERRORI TECNICI GENERALI
         st.error(f"🕵️ ERRORE DI SISTEMA: {e}")
         return None
-
 # Creiamo tre colonne. Quella centrale ospiterà il logo, 
 # quelle laterali (vuote) servono per centrarlo.
 col1, col2, col3 = st.columns([1, 2, 1]) 
