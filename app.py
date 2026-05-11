@@ -58,36 +58,34 @@ def estrai_partite(url):
         return []
 
 # --- 2. GESTIONE DELLA SCHEDINA SETTIMANALE ---
-FILE_SCHEDINA = "schedina_settimana.csv"
+# CAMBIA QUESTO NUMERO OGNI SETTIMANA
+NUMERO_GIORNATA = 2 
 
-URL_PRIMA = "https://www.carnico.it/calendario/prima-categoria/?giornata=seconda-giornata-prima-categoria"
-URL_SECONDA = "https://www.carnico.it/calendario/seconda-categoria/?giornata=seconda-giornata-seconda-categoria"
-URL_TERZA = "https://www.carnico.it/calendario/terza-categoria/?giornata=seconda-giornata-terza-categoria"
+# Fissiamo il "Seme": questo garantisce che l'estrazione casuale 
+# sia IDENTICA ogni volta che il sito si riaccende per questa giornata.
+random.seed(NUMERO_GIORNATA)
 
-if not os.path.exists(FILE_SCHEDINA):
-    st.info("Sto generando la nuova schedina della settimana...")
+st.info(f"Schedina della {NUMERO_GIORNATA}ª Giornata")
+
+# Ora eseguiamo l'estrazione (che sarà sempre la stessa per il numero 2)
+partite_prima = estrai_partite(URL_PRIMA)
+partite_seconda = estrai_partite(URL_SECONDA)
+partite_terza = estrai_partite(URL_TERZA)
+
+if len(partite_prima) >= 6 and len(partite_seconda) >= 4 and len(partite_terza) >= 3:
+    # Dato che abbiamo usato random.seed(2), queste scelte saranno 
+    # casuali ma "congelate" per tutta la settimana!
+    scelte_prima = random.sample(partite_prima, 6)
+    scelte_seconda = random.sample(partite_seconda, 4)
+    scelte_terza = random.sample(partite_terza, 3)
     
-    partite_prima = estrai_partite(URL_PRIMA)
-    partite_seconda = estrai_partite(URL_SECONDA)
-    partite_terza = estrai_partite(URL_TERZA)
+    tutte_le_partite = scelte_prima + scelte_seconda + scelte_terza
+    categorie = ["Prima Categoria"] * 6 + ["Seconda Categoria"] * 4 + ["Terza Categoria"] * 3
     
-    if len(partite_prima) >= 6 and len(partite_seconda) >= 4 and len(partite_terza) >= 3:
-        scelte_prima = random.sample(partite_prima, 6)
-        scelte_seconda = random.sample(partite_seconda, 4)
-        scelte_terza = random.sample(partite_terza, 3)
-        
-        # NUOVA LOGICA: Creiamo una colonna per le categorie
-        tutte_le_partite = scelte_prima + scelte_seconda + scelte_terza
-        categorie = ["Prima Categoria"] * 6 + ["Seconda Categoria"] * 4 + ["Terza Categoria"] * 3
-        
-        df_partite = pd.DataFrame({"Categoria": categorie, "Partite": tutte_le_partite})
-        df_partite.to_csv(FILE_SCHEDINA, index=False)
-        st.rerun() 
-    else:
-        st.error("Non sono riuscito a trovare abbastanza partite sul sito. Controlla i link!")
-        st.stop()
+    df_partite = pd.DataFrame({"Categoria": categorie, "Partite": tutte_le_partite})
 else:
-    df_partite = pd.read_csv(FILE_SCHEDINA)
+    st.error("Errore nel recupero partite. Verifica i link!")
+    st.stop()
 
 # --- 3. IL FORM PER I PRONOSTICI ---
 # --- 3. IL FORM PER I PRONOSTICI CON SCADENZA AUTOMATICA ---
