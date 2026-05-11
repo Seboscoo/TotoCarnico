@@ -12,19 +12,24 @@ FILE_LOGO = "logo.webp"
 LINK_CSV_FOGLIO = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTMNpU0j7ZM0EACZxO2-SfHpPKnXxe7rXSsa0D4pptqecMvW-2LBW771Cov0XUib0ZDc2D1k_IEc0tk/pub?gid=1209485560&single=true&output=csv"
 def recupera_vecchia_giocata(nome_cercato):
     try:
-        # skiprows=4 fa partire la lettura dalla riga 5 (dove ci sono i tuoi nuovi nomi)
+        # skiprows=4 fa partire la lettura dalla riga 5
         df_risposte = pd.read_csv(LINK_CSV_FOGLIO, skiprows=4)
         
-        # Cerca la colonna "nome" (assicurati di averla chiamata esattamente così sul foglio)
-        df_risposte['Nome'] = df_risposte['Nome'].astype(str).str.strip().lower()
+        # --- LA RIGA MAGICA ---
+        # Trasforma i nomi di tutte le colonne in minuscolo per evitare errori (es. "Partita 1" diventa "partita 1")
+        df_risposte.columns = df_risposte.columns.astype(str).str.strip().str.lower()
+        
+        # Ora troverà sicuramente la colonna "nome"
+        df_risposte['nome'] = df_risposte['nome'].astype(str).str.strip().lower()
         
         # Trova l'ultima riga corrispondente al giocatore
-        giocata_utente = df_risposte[df_risposte['Nome'] == nome_cercato.strip().lower()].iloc[-1]
+        giocata_utente = df_risposte[df_risposte['nome'] == nome_cercato.strip().lower()].iloc[-1]
         
-        # Estrae i 13 segni, cercando le colonne da "partita 1" a "partita 13"
+        # Estrae i 13 segni
         vecchi_segni = []
         for i in range(1, 14):
-            segno = str(giocata_utente[f'Partita {i}'])
+            # Cerca le colonne che ora si chiamano sicuramente "partita 1", "partita 2", ecc.
+            segno = str(giocata_utente[f'partita {i}'])
             
             # Pulisce eventuali celle vuote
             if segno.lower() == 'nan':
@@ -34,7 +39,6 @@ def recupera_vecchia_giocata(nome_cercato):
             
         return vecchi_segni
     except Exception as e:
-        # Se non trova il nome o c'è un errore, restituisce None
         return None
 
 # Creiamo tre colonne. Quella centrale ospiterà il logo, 
