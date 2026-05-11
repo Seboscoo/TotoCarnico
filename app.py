@@ -15,30 +15,46 @@ def recupera_vecchia_giocata(nome_cercato):
         # skiprows=4 fa partire la lettura dalla riga 5
         df_risposte = pd.read_csv(LINK_CSV_FOGLIO, skiprows=4)
         
-        # --- LA RIGA MAGICA ---
-        # Trasforma i nomi di tutte le colonne in minuscolo per evitare errori (es. "Partita 1" diventa "partita 1")
+        # Trasforma i nomi in minuscolo
         df_risposte.columns = df_risposte.columns.astype(str).str.strip().str.lower()
         
-        # Ora troverà sicuramente la colonna "nome"
+        # 1. CONTROLLO COLONNA NOME
+        if 'nome' not in df_risposte.columns:
+            st.error(f"🕵️ ERRORE FOGLIO: Non trovo la colonna 'nome'. Python sta leggendo queste colonne: {list(df_risposte.columns)}")
+            return None
+            
         df_risposte['nome'] = df_risposte['nome'].astype(str).str.strip().lower()
         
-        # Trova l'ultima riga corrispondente al giocatore
-        giocata_utente = df_risposte[df_risposte['nome'] == nome_cercato.strip().lower()].iloc[-1]
+        # Filtriamo le righe corrispondenti al giocatore
+        giocate_trovate = df_risposte[df_risposte['nome'] == nome_cercato.strip().lower()]
         
-        # Estrae i 13 segni
+        # Se non ci sono giocate, restituisce None tranquillamente
+        if giocate_trovate.empty:
+            return None
+            
+        # Prende l'ultima giocata inserita da quella persona
+        giocata_utente = giocate_trovate.iloc[-1]
+        
         vecchi_segni = []
         for i in range(1, 14):
-            # Cerca le colonne che ora si chiamano sicuramente "partita 1", "partita 2", ecc.
-            segno = str(giocata_utente[f'partita {i}'])
+            nome_colonna = f'partita {i}'
             
-            # Pulisce eventuali celle vuote
+            # 2. CONTROLLO COLONNE PARTITE
+            if nome_colonna not in df_risposte.columns:
+                st.error(f"🕵️ ERRORE FOGLIO: Mi sono bloccato perché manca o è scritta male la colonna '{nome_colonna}' nel foglio Excel!")
+                return None
+                
+            segno = str(giocata_utente[nome_colonna])
             if segno.lower() == 'nan':
                 segno = ""
                 
             vecchi_segni.append(segno)
             
         return vecchi_segni
+        
     except Exception as e:
+        # 3. CONTROLLO ERRORI TECNICI GENERARLI
+        st.error(f"🕵️ ERRORE DI SISTEMA: {e}")
         return None
 
 # Creiamo tre colonne. Quella centrale ospiterà il logo, 
