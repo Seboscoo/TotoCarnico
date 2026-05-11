@@ -8,7 +8,24 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 # Definiamo il percorso del logo (quello che hai messo nella cartella)
 FILE_LOGO = "logo.webp"
+# INCOLLA QUI IL LINK CSV DEL TUO FOGLIO GOOGLE
+LINK_CSV_FOGLIO = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTMNpU0j7ZM0EACZxO2-SfHpPKnXxe7rXSsa0D4pptqecMvW-2LBW771Cov0XUib0ZDc2D1k_IEc0tk/pub?gid=1209485560&single=true&output=csv"
 
+def recupera_vecchia_giocata(nome_cercato):
+    try:
+        df_risposte = pd.read_csv(LINK_CSV_FOGLIO)
+        df_risposte['Nome Giocatore'] = df_risposte['Nome Giocatore'].astype(str).str.strip().lower()
+
+        # Trova l'ultima giocata di questo nome
+        giocata_utente = df_risposte[df_risposte['Nome Giocatore'] == nome_cercato.strip().lower()].iloc[-1]
+
+        # Estrae i segni da "Partita 1" a "Partita 13"
+        vecchi_segni = []
+        for i in range(1, 14):
+            vecchi_segni.append(str(giocata_utente[f'Partita {i}']))
+        return vecchi_segni
+    except:
+        return None
 # Creiamo tre colonne. Quella centrale ospiterà il logo, 
 # quelle laterali (vuote) servono per centrarlo.
 col1, col2, col3 = st.columns([1, 2, 1]) 
@@ -89,101 +106,106 @@ else:
     st.error("Errore nel recupero partite. Verifica i link!")
     st.stop()
 
-# --- 3. IL FORM PER I PRONOSTICI ---
 # --- 3. IL FORM PER I PRONOSTICI CON SCADENZA AUTOMATICA ---
-st.header("La Schedina della Settimana Seconda Giornata")
+st.header("La Schedina della Settimana")
 st.caption("Made By Esseba")
 st.caption("LUCIO MERDA")
 
 # --- IMPOSTA QUI LA DATA DI SCADENZA ---
-# Esempio: 10 Maggio 2026 alle ore 14:30
 scadenza = datetime(2026, 5, 15, 20, 30, tzinfo=ZoneInfo("Europe/Rome"))
 adesso = datetime.now(ZoneInfo("Europe/Rome"))
 
 # CONTROLLO ORARIO
 if adesso < scadenza:
-    # Se siamo in tempo, mostriamo il modulo
+    # --- PARTE INPUT NOME E CARICAMENTO ---
+    nome_giocatore = st.text_input("Inserisci il tuo Nome")
+
+    vecchi_pronostici = None
+    if nome_giocatore:
+        if st.button("Carica la mia ultima giocata"):
+            st.info("Sto cercando nel database...")
+            vecchi_pronostici = recupera_vecchia_giocata(nome_giocatore)
+            if vecchi_pronostici:
+                st.success("Giocata trovata, se vuoi modificarla puoi farlo ma stai attento che ti vedo.")
+            else:
+                st.warning("Non ho trovato giocate precedenti per questo nome")
+
+    # --- INIZIO DEL MODULO VERO E PROPRIO ---
     with st.form("form_totocalcio"):
-        nome_giocatore = st.text_input("Inserisci il tuo Nome")
-        st.write("Seleziona 1, X, o 2 per ogni partita, Puoi non Rispondere se ti chiami Andrea Monai")
+        st.write("Seleziona 1, X, o 2 per ogni partita. Puoi non Rispondere se ti chiami Andrea Monai")
         
         pronostici_fatti = []
+        indice_globale = 0 
         
-        # Dividiamo visivamente le categorie
         for cat in ["Prima Categoria", "Seconda Categoria", "Terza Categoria"]:
             st.subheader(f" {cat}")
-            
-            # Filtriamo solo le partite di questa categoria
             partite_categoria = df_partite[df_partite["Categoria"] == cat]["Partite"]
             
             for partita in partite_categoria:
-                # Aggiungiamo index=None per far sì che nessun pallino sia già selezionato
-                scelta = st.radio(partita, ["1", "X", "2"], horizontal=True, key=partita, index=None)
+                indice_predefinito = None
+                if vecchi_pronostici and len(vecchi_pronostici) > indice_globale:
+                    segno = vecchi_pronostici[indice_globale]
+                    if segno == "1": indice_predefinito = 0
+                    elif segno == "X": indice_predefinito = 1
+                    elif segno == "2": indice_predefinito = 2
                 
-                # Se non seleziona nulla, Streamlit restituisce 'None'. 
-                # Noi lo trasformiamo in uno spazio vuoto per inviarlo a Google.
+                scelta = st.radio(partita, ["1", "X", "2"], horizontal=True, key=partita, index=indice_predefinito)
+                
                 if scelta is None:
                     pronostici_fatti.append("")
                 else:
                     pronostici_fatti.append(scelta)
                 
+                indice_globale += 1
             st.markdown("---")
             
-        pulsante_invio = st.form_submit_button("Invia Giocata Definitiva")
-      
-        # --- SEZIONE 4: INVIO DATI (dentro il form) ---
-        if pulsante_invio:
-            if nome_giocatore.strip() == "":
-                st.warning("Ma sei scemo? devi inserire il nome COGLIONE")
-            else:
-                url_form = "https://docs.google.com/forms/d/e/1FAIpQLSe4qwxFjLYQ-nxenG7cEIcRd4fSukdeUbtmZXL6laQ6VN4iKQ/formResponse"
+        pulsante_invio = st.form_submit_button("Invia Giocata")
+
+    # --- SEZIONE 4: INVIO DATI (Deve essere sotto il form ma dentro il controllo scadenza) ---
+    if pulsante_invio:
+        if nome_giocatore.strip() == "":
+            st.warning("Ma sei scemo? devi inserire il nome COGLIONE")
+        else:
+            url_form = "https://docs.google.com/forms/d/e/1FAIpQLSe4qwxFjLYQ-nxenG7cEIcRd4fSukdeUbtmZXL6laQ6VN4iKQ/formResponse"
+            
+            form_data = {
+                "entry.209404488": nome_giocatore,
+                "entry.1501733804": pronostici_fatti[0],
+                "entry.2143684766": pronostici_fatti[1],
+                "entry.328672958": pronostici_fatti[2],
+                "entry.1212089018": pronostici_fatti[3],
+                "entry.1836274014": pronostici_fatti[4],
+                "entry.805664275": pronostici_fatti[5],
+                "entry.1475285346": pronostici_fatti[6],
+                "entry.1518268040": pronostici_fatti[7],
+                "entry.510699695": pronostici_fatti[8],
+                "entry.497013538": pronostici_fatti[9],
+                "entry.186611401": pronostici_fatti[10],
+                "entry.158458027": pronostici_fatti[11],
+                "entry.1445830973": pronostici_fatti[12],
+            }
+            
+            try:
+                headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+                risposta = requests.post(url_form, data=form_data, headers=headers)
                 
-                form_data = {
-                    "entry.209404488": nome_giocatore,
-                    "entry.1501733804": pronostici_fatti[0],
-                    "entry.2143684766": pronostici_fatti[1],
-                    "entry.328672958": pronostici_fatti[2],
-                    "entry.1212089018": pronostici_fatti[3],
-                    "entry.1836274014": pronostici_fatti[4],
-                    "entry.805664275": pronostici_fatti[5],
-                    "entry.1475285346": pronostici_fatti[6],
-                    "entry.1518268040": pronostici_fatti[7],
-                    "entry.510699695": pronostici_fatti[8],
-                    "entry.497013538": pronostici_fatti[9],
-                    "entry.186611401": pronostici_fatti[10],
-                    "entry.158458027": pronostici_fatti[11],
-                    "entry.1445830973": pronostici_fatti[12],
-                }
-                
-                try:
-                    headers = {'Content-Type': 'application/x-www-form-urlencoded'}
-                    risposta = requests.post(url_form, data=form_data, headers=headers)
+                if risposta.status_code == 200:
+                    st.success(f"Grazie Mille {nome_giocatore}, pronostici inviati!")
+                    st.markdown("### La Tua Giocata")
+                    st.info("Fai uno screenshot di questa schermata e non rompere il cazzo")
                     
-                    if risposta.status_code == 200:
-                        st.success(f"Grazie Mille {nome_giocatore}, pronostici inviati!")
-                        
-                        # --- INIZIO SCONTRINO VIRTUALE ---
-                        st.markdown("### 🧾 La Tua Giocata")
-                        st.info("Fai uno screenshot di questa schermata e non rompere il cazzo")
-                        
-                        # Creiamo una tabella elegante unendo le partite ai pronostici scelti
-                        df_riepilogo = pd.DataFrame({
-                            "Partita": df_partite["Partite"],
-                            "Il tuo Pronostico": pronostici_fatti
-                        })
-                        
-                        # st.table mostra una tabella fissa, perfetta per gli screenshot
-                        st.table(df_riepilogo)
-                        # --- FINE SCONTRINO VIRTUALE ---
-                        
-                    else:
-                        st.error(f"Errore tecnico (Codice {risposta.status_code}).")
-                        
-                except Exception as e:
-                    st.error(f"Errore di connessione: {e}")
+                    df_riepilogo = pd.DataFrame({
+                        "Partita": df_partite["Partite"],
+                        "Il tuo Pronostico": pronostici_fatti
+                    })
+                    st.table(df_riepilogo)
+                else:
+                    st.error(f"Errore tecnico (Codice {risposta.status_code}).")
+            except Exception as e:
+                st.error(f"Errore di connessione: {e}")
 
 else:
     # --- COSA SUCCEDE SE IL TEMPO È SCADUTO ---
-    st.error(" LE GIOCATE SONO CHIUSE!")
+    st.error("LE GIOCATE SONO CHIUSE!")
     st.info(f"Il termine per l'invio era il {scadenza.strftime('%d/%m/%Y alle %H:%M')}.")
     st.write("Per questa giornata hai perso 2€ AHAHAHAHAHAHA")
