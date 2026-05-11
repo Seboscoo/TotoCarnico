@@ -64,7 +64,9 @@ NUMERO_GIORNATA = 2
 # Fissiamo il "Seme": questo garantisce che l'estrazione casuale 
 # sia IDENTICA ogni volta che il sito si riaccende per questa giornata.
 random.seed(NUMERO_GIORNATA)
-
+URL_PRIMA = "https://www.carnico.it/calendario/prima-categoria/?giornata=seconda-giornata-prima-categoria"
+URL_SECONDA = "https://www.carnico.it/calendario/seconda-categoria/?giornata=seconda-giornata-seconda-categoria"
+URL_TERZA = "https://www.carnico.it/calendario/terza-categoria/?giornata=seconda-giornata-terza-categoria"
 st.info(f"Schedina della {NUMERO_GIORNATA}ª Giornata")
 
 # Ora eseguiamo l'estrazione (che sarà sempre la stessa per il numero 2)
