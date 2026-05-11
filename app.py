@@ -60,9 +60,9 @@ def estrai_partite(url):
 # --- 2. GESTIONE DELLA SCHEDINA SETTIMANALE ---
 FILE_SCHEDINA = "schedina_settimana.csv"
 
-URL_PRIMA = "https://www.carnico.it/calendario/prima-categoria/?giornata=prima-giornata-prima-categoria"
-URL_SECONDA = "https://www.carnico.it/calendario/seconda-categoria/?giornata=prima-giornata-seconda-categoria"
-URL_TERZA = "https://www.carnico.it/calendario/terza-categoria/?giornata=prima-giornata-terza-categoria"
+URL_PRIMA = "https://www.carnico.it/calendario/prima-categoria/?giornata=seconda-giornata-prima-categoria"
+URL_SECONDA = "https://www.carnico.it/calendario/seconda-categoria/?giornata=seconda-giornata-seconda-categoria"
+URL_TERZA = "https://www.carnico.it/calendario/terza-categoria/?giornata=seconda-giornata-terza-categoria"
 
 if not os.path.exists(FILE_SCHEDINA):
     st.info("Sto generando la nuova schedina della settimana...")
@@ -91,12 +91,13 @@ else:
 
 # --- 3. IL FORM PER I PRONOSTICI ---
 # --- 3. IL FORM PER I PRONOSTICI CON SCADENZA AUTOMATICA ---
-st.header("La Schedina della Settimana Prima Giornata")
+st.header("La Schedina della Settimana Seconda Giornata")
 st.caption("Made By Esseba")
+st.caption("LUCIO MERDA")
 
 # --- IMPOSTA QUI LA DATA DI SCADENZA ---
 # Esempio: 10 Maggio 2026 alle ore 14:30
-scadenza = datetime(2026, 5, 9, 16, 30, tzinfo=ZoneInfo("Europe/Rome"))
+scadenza = datetime(2026, 5, 15, 20, 30, tzinfo=ZoneInfo("Europe/Rome"))
 adesso = datetime.now(ZoneInfo("Europe/Rome"))
 
 # CONTROLLO ORARIO
@@ -104,7 +105,7 @@ if adesso < scadenza:
     # Se siamo in tempo, mostriamo il modulo
     with st.form("form_totocalcio"):
         nome_giocatore = st.text_input("Inserisci il tuo Nome")
-        st.write("Seleziona 1, X, o 2 per ogni partita")
+        st.write("Seleziona 1, X, o 2 per ogni partita, Puoi non Rispondere se ti chiami Andrea Monai")
         
         pronostici_fatti = []
         
@@ -116,8 +117,15 @@ if adesso < scadenza:
             partite_categoria = df_partite[df_partite["Categoria"] == cat]["Partite"]
             
             for partita in partite_categoria:
-                scelta = st.radio(partita, ["1", "X", "2"], horizontal=True, key=partita)
-                pronostici_fatti.append(scelta)
+                # Aggiungiamo index=None per far sì che nessun pallino sia già selezionato
+                scelta = st.radio(partita, ["1", "X", "2"], horizontal=True, key=partita, index=None)
+                
+                # Se non seleziona nulla, Streamlit restituisce 'None'. 
+                # Noi lo trasformiamo in uno spazio vuoto per inviarlo a Google.
+                if scelta is None:
+                    pronostici_fatti.append("")
+                else:
+                    pronostici_fatti.append(scelta)
                 
             st.markdown("---")
             
@@ -126,7 +134,7 @@ if adesso < scadenza:
         # --- SEZIONE 4: INVIO DATI (dentro il form) ---
         if pulsante_invio:
             if nome_giocatore.strip() == "":
-                st.warning("Ma sei scemo? devi inserire il nome!")
+                st.warning("Ma sei scemo? devi inserire il nome COGLIONE")
             else:
                 url_form = "https://docs.google.com/forms/d/e/1FAIpQLSe4qwxFjLYQ-nxenG7cEIcRd4fSukdeUbtmZXL6laQ6VN4iKQ/formResponse"
                 
