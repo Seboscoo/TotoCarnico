@@ -136,28 +136,34 @@ if len(partite_prima) >= 6 and len(partite_seconda) >= 4 and len(partite_terza) 
 else:
     st.error("Errore nel recupero partite. Verifica i link!")
     st.stop()
-
 # --- 3. IL FORM PER I PRONOSTICI CON SCADENZA AUTOMATICA ---
 st.header("La Schedina della Settimana")
 st.caption("Made By Esseba")
 st.caption("LUCIO MERDA")
 
-# --- IMPOSTA QUI LA DATA DI SCADENZA ---
 scadenza = datetime(2026, 5, 15, 20, 30, tzinfo=ZoneInfo("Europe/Rome"))
 adesso = datetime.now(ZoneInfo("Europe/Rome"))
 
-# CONTROLLO ORARIO
 if adesso < scadenza:
-    # --- PARTE INPUT NOME E CARICAMENTO ---
     nome_giocatore = st.text_input("Inserisci il tuo Nome")
 
-    vecchi_pronostici = None
     if nome_giocatore:
         if st.button("Carica la mia ultima giocata"):
             st.info("Sto cercando nel database...")
             vecchi_pronostici = recupera_vecchia_giocata(nome_giocatore)
+            
             if vecchi_pronostici:
                 st.success("Giocata trovata, se vuoi modificarla puoi farlo ma stai attento che ti vedo.")
+                
+                # --- LA MAGIA: FORZIAMO LA MEMORIA DI STREAMLIT ---
+                for i, partita in enumerate(tutte_le_partite):
+                    if i < len(vecchi_pronostici):
+                        # Trasformiamo l'eventuale '1.0' in '1', togliamo spazi e mettiamo in maiuscolo
+                        segno = vecchi_pronostici[i].replace(".0", "").strip().upper()
+                        
+                        # Se il segno è 1, X o 2, accendiamo il pallino corrispondente!
+                        if segno in ["1", "X", "2"]:
+                            st.session_state[partita] = segno
             else:
                 st.warning("Non ho trovato giocate precedenti per questo nome")
 
@@ -166,28 +172,21 @@ if adesso < scadenza:
         st.write("Seleziona 1, X, o 2 per ogni partita. Puoi non Rispondere se ti chiami Andrea Monai")
         
         pronostici_fatti = []
-        indice_globale = 0 
         
         for cat in ["Prima Categoria", "Seconda Categoria", "Terza Categoria"]:
             st.subheader(f" {cat}")
             partite_categoria = df_partite[df_partite["Categoria"] == cat]["Partite"]
             
             for partita in partite_categoria:
-                indice_predefinito = None
-                if vecchi_pronostici and len(vecchi_pronostici) > indice_globale:
-                    segno = vecchi_pronostici[indice_globale]
-                    if segno == "1": indice_predefinito = 0
-                    elif segno == "X": indice_predefinito = 1
-                    elif segno == "2": indice_predefinito = 2
-                
-                scelta = st.radio(partita, ["1", "X", "2"], horizontal=True, key=partita, index=indice_predefinito)
+                # Grazie alla "key=partita", Streamlit leggerà la memoria che abbiamo forzato prima
+                # e accenderà i pallini in totale autonomia!
+                scelta = st.radio(partita, ["1", "X", "2"], horizontal=True, key=partita, index=None)
                 
                 if scelta is None:
                     pronostici_fatti.append("")
                 else:
                     pronostici_fatti.append(scelta)
                 
-                indice_globale += 1
             st.markdown("---")
             
         pulsante_invio = st.form_submit_button("Invia Giocata")
