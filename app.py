@@ -6,6 +6,7 @@ import random
 import os
 from datetime import datetime
 from zoneinfo import ZoneInfo
+import streamlit.components.v1 as components
 # Definiamo il percorso del logo (quello che hai messo nella cartella)
 FILE_LOGO = "logo.webp"
 # INCOLLA QUI IL LINK CSV DEL TUO FOGLIO GOOGLE
@@ -141,9 +142,49 @@ st.header("La Schedina della Settimana")
 st.caption("Made By Esseba")
 st.caption("LUCIO MERDA")
 
-scadenza = datetime(2026, 5, 15, 20, 30, tzinfo=ZoneInfo("Europe/Rome"))
+# --- IMPOSTA QUI LA DATA DI SCADENZA ---
+scadenza = datetime(2026, 5, 16, 16, 30, tzinfo=ZoneInfo("Europe/Rome"))
 adesso = datetime.now(ZoneInfo("Europe/Rome"))
 
+# 1. Mostriamo un avviso testuale classico
+st.info(f" **Scadenza per l'invio:** {scadenza.strftime('%d/%m/%Y alle ore %H:%M')}")
+
+# 2. Creiamo il timer che scorre (HTML + JavaScript)
+# Usiamo isoformat() così il fuso orario di Roma viene rispettato sempre
+scadenza_iso = scadenza.isoformat()
+
+html_countdown = f"""
+<div style="text-align: center; font-family: sans-serif; background-color: #262730; padding: 15px; border-radius: 10px; border: 2px solid #ff4b4b;">
+    <p style="color: #fafafa; margin: 0; font-size: 16px;">Mancano esattamente:</p>
+    <h1 id="timer" style="color: #ff4b4b; margin: 5px 0 0 0; font-weight: bold; letter-spacing: 2px;">Calcolo in corso...</h1>
+</div>
+<script>
+    // Prende la data di scadenza da Python
+    var countDownDate = new Date("{scadenza_iso}").getTime();
+    
+    // Aggiorna il timer ogni secondo
+    var x = setInterval(function() {{
+        var now = new Date().getTime();
+        var distance = countDownDate - now;
+        
+        // Se il tempo è scaduto
+        if (distance < 0) {{
+            clearInterval(x);
+            document.getElementById("timer").innerHTML = "TEMPO SCADUTO!";
+        }} else {{
+            // Calcola giorni, ore, minuti e secondi
+            var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            
+            // Scrive il risultato nel sito
+            document.getElementById("timer").innerHTML = days + "g " + hours + "h " + minutes + "m " + seconds + "s";
+        }}
+    }}, 1000);
+</script>
+"""
+components.html(html_countdown, height=110)
 if adesso < scadenza:
     nome_giocatore = st.text_input("Inserisci il tuo Nome")
 
