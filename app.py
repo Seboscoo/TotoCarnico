@@ -282,4 +282,4 @@ else:
     # --- COSA SUCCEDE SE IL TEMPO È SCADUTO ---
     st.error("LE GIOCATE SONO CHIUSE!")
     st.info(f"Il termine per l'invio era il {scadenza.strftime('%d/%m/%Y alle %H:%M')}.")
-    st.write("Per questa giornata hai perso 2€ AHAHAHAHAHAHA")
+    st.write("Se non avevi già caricato hai perso 2€ AHAHAHAHAHA GODO ")
