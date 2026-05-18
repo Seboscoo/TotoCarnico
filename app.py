@@ -126,6 +126,9 @@ partite_terza = estrai_partite(URL_TERZA)
 if len(partite_prima) >= 6 and len(partite_seconda) >= 4 and len(partite_terza) >= 3:
     # Dato che abbiamo usato random.seed(2), queste scelte saranno 
     # casuali ma "congelate" per tutta la settimana!
+    partite_prima.sort()
+    partite_seconda.sort()
+    partite_terza.sort()
     scelte_prima = random.sample(partite_prima, 6)
     scelte_seconda = random.sample(partite_seconda, 4)
     scelte_terza = random.sample(partite_terza, 3)
