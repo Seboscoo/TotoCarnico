@@ -115,7 +115,7 @@ NUMERO_GIORNATA = 5
 random.seed(NUMERO_GIORNATA)
 URL_PRIMA = "https://www.carnico.it/calendario/prima-categoria/?giornata=quinta-giornata-prima-categoria"
 URL_SECONDA = "https://www.carnico.it/calendario/seconda-categoria/?giornata=quinta-giornata-seconda-categoria"
-URL_TERZA = "https://www.carnico.it/calendario/terza-categoria/?giornata=quinta-giornata-terza-categoria"
+URL_TERZA = "https://www.carnico.it/calendario/terza-categoria/?giornata=sesta-giornata-terza-categoria"
 st.info(f"Schedina della {NUMERO_GIORNATA}ª Giornata")
 
 # Ora eseguiamo l'estrazione (che sarà sempre la stessa per il numero 2)
