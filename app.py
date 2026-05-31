@@ -108,14 +108,14 @@ def estrai_partite(url):
 
 # --- 2. GESTIONE DELLA SCHEDINA SETTIMANALE ---
 # CAMBIA QUESTO NUMERO OGNI SETTIMANA
-NUMERO_GIORNATA = 4
+NUMERO_GIORNATA = 5
 
 # Fissiamo il "Seme": questo garantisce che l'estrazione casuale 
 # sia IDENTICA ogni volta che il sito si riaccende per questa giornata.
 random.seed(NUMERO_GIORNATA)
-URL_PRIMA = "https://www.carnico.it/calendario/prima-categoria/?giornata=quarta-giornata-prima-categoria"
-URL_SECONDA = "https://www.carnico.it/calendario/seconda-categoria/?giornata=quarta-giornata-seconda-categoria"
-URL_TERZA = "https://www.carnico.it/calendario/terza-categoria/?giornata=quarta-giornata-terza-categoria"
+URL_PRIMA = "https://www.carnico.it/calendario/prima-categoria/?giornata=quinta-giornata-prima-categoria"
+URL_SECONDA = "https://www.carnico.it/calendario/seconda-categoria/?giornata=quinta-giornata-seconda-categoria"
+URL_TERZA = "https://www.carnico.it/calendario/terza-categoria/?giornata=quinta-giornata-terza-categoria"
 st.info(f"Schedina della {NUMERO_GIORNATA}ª Giornata")
 
 # Ora eseguiamo l'estrazione (che sarà sempre la stessa per il numero 2)
@@ -146,7 +146,7 @@ st.caption("Made By Esseba")
 st.caption("LUCIO MERDA")
 
 # --- IMPOSTA QUI LA DATA DI SCADENZA ---
-scadenza = datetime(2026, 5, 29, 20, 30, tzinfo=ZoneInfo("Europe/Rome"))
+scadenza = datetime(2026, 6, 5, 16, 30, tzinfo=ZoneInfo("Europe/Rome"))
 adesso = datetime.now(ZoneInfo("Europe/Rome"))
 
 # 1. Mostriamo un avviso testuale classico
