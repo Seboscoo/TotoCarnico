@@ -106,39 +106,30 @@ def estrai_partite(url):
         st.error(f"Errore nello scaricare {url}: {e}")
         return []
 
-# --- 2. GESTIONE DELLA SCHEDINA SETTIMANALE ---
-# CAMBIA QUESTO NUMERO OGNI SETTIMANA
+# --- 2. GESTIONE DELLA SCHEDINA (LEGGE DA GOOGLE SHEETS) ---
+# CAMBIA QUESTO NUMERO OGNI SETTIMANA PER LA GRAFICA (E cambia la data in fondo!)
 NUMERO_GIORNATA = 5
-
-# Fissiamo il "Seme": questo garantisce che l'estrazione casuale 
-# sia IDENTICA ogni volta che il sito si riaccende per questa giornata.
-random.seed(NUMERO_GIORNATA)
-URL_PRIMA = "https://www.carnico.it/calendario/prima-categoria/?giornata=quinta-giornata-prima-categoria"
-URL_SECONDA = "https://www.carnico.it/calendario/seconda-categoria/?giornata=quinta-giornata-seconda-categoria"
-URL_TERZA = "https://www.carnico.it/calendario/terza-categoria/?giornata=sesta-giornata-terza-categoria"
 st.info(f"Schedina della {NUMERO_GIORNATA}ª Giornata")
 
-# Ora eseguiamo l'estrazione (che sarà sempre la stessa per il numero 2)
-partite_prima = estrai_partite(URL_PRIMA)
-partite_seconda = estrai_partite(URL_SECONDA)
-partite_terza = estrai_partite(URL_TERZA)
-
-if len(partite_prima) >= 6 and len(partite_seconda) >= 4 and len(partite_terza) >= 3:
-    # Dato che abbiamo usato random.seed(2), queste scelte saranno 
-    # casuali ma "congelate" per tutta la settimana!
-    partite_prima.sort()
-    partite_seconda.sort()
-    partite_terza.sort()
-    scelte_prima = random.sample(partite_prima, 6)
-    scelte_seconda = random.sample(partite_seconda, 4)
-    scelte_terza = random.sample(partite_terza, 3)
+try:
+    # Legge SOLO la prima riga del tuo CSV pubblico (le intestazioni)
+    df_header = pd.read_csv(LINK_CSV_FOGLIO, nrows=0)
     
-    tutte_le_partite = scelte_prima + scelte_seconda + scelte_terza
+    # Prende i nomi delle partite saltando le prime 2 colonne (Data e Nome)
+    # Prende esattamente le 13 colonne successive
+    tutte_le_partite = list(df_header.columns)[2:15]
+    
+    # Suddivide le partite (Assicurati che su Sheets l'ordine sia Prima, Seconda, Terza)
+    scelte_prima = tutte_le_partite[0:6]
+    scelte_seconda = tutte_le_partite[6:10]
+    scelte_terza = tutte_le_partite[10:13]
+    
+    # Crea il DataFrame che serve per far funzionare i bottoni sotto
     categorie = ["Prima Categoria"] * 6 + ["Seconda Categoria"] * 4 + ["Terza Categoria"] * 3
-    
     df_partite = pd.DataFrame({"Categoria": categorie, "Partite": tutte_le_partite})
-else:
-    st.error("Errore nel recupero partite. Verifica i link!")
+
+except Exception as e:
+    st.error(f"❌ Impossibile leggere le partite dal Foglio Google. Dettaglio: {e}")
     st.stop()
 # --- 3. IL FORM PER I PRONOSTICI CON SCADENZA AUTOMATICA ---
 st.header("La Schedina della Settimana")
