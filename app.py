@@ -104,9 +104,9 @@ if C_E_UN_VINCITORE:
     </style>
     
     <div class="banner-vincitore">
-        <p class="banner-testo"> DOPO 16 GIORNATE ABBIAMO IL PRIMO VINCITORE,
+        <p class="banner-testo">⚠️ DOPO 16 GIORNATE ABBIAMO IL PRIMO VINCITORE,
         QUEL CAZZONE DI {NOME_VINCITORE.upper()} VINCE PER LA PRIMA VOLTA, 
-        FAI SCHIFO </p>
+        FAI SCHIFO💩🏳️‍🌈 </p>
     </div>
     """
     st.markdown(banner_html, unsafe_allow_html=True)
