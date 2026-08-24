@@ -104,7 +104,9 @@ if C_E_UN_VINCITORE:
     </style>
     
     <div class="banner-vincitore">
-        <p class="banner-testo"> DOPO 16 GIORNATE QUEL CAZZONE DI {NOME_VINCITORE.upper()} VINCE PER LA PRIMA VOLTA</p>
+        <p class="banner-testo"> DOPO 16 GIORNATE ABBIAMO IL PRIMO VINCITORE,
+        QUEL CAZZONE DI {NOME_VINCITORE.upper()} VINCE PER LA PRIMA VOLTA, 
+        FAI SCHIFO </p>
     </div>
     """
     st.markdown(banner_html, unsafe_allow_html=True)
@@ -170,6 +172,7 @@ except Exception as e:
 st.header("La Schedina della Settimana")
 st.caption("Made By Esseba")
 st.caption("LUCIO MERDA")
+
 
 # --- IMPOSTA QUI LA DATA DI SCADENZA ---
 scadenza = datetime(2026, 8, 29, 17, 30, tzinfo=ZoneInfo("Europe/Rome"))
