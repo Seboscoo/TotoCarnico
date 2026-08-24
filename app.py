@@ -73,6 +73,41 @@ else:
     st.info("⚠️ Logo 'logo.png' non trovato nella cartella. Ma online funzionerà se l'hai caricato su GitHub.")
 st.title("Totocalcio Carnico ")
 st.write("Inserisci i tuoi pronostici.")
+# --- INTERRUTTORE BANNER VINCITORE ---
+# Metti True se vuoi mostrare il banner, False per nasconderlo
+C_E_UN_VINCITORE = True
+NOME_VINCITORE = "Tommaso di Biase" 
+
+if C_E_UN_VINCITORE:
+    banner_html = f"""
+    <style>
+    @keyframes lampeggia {{
+        0% {{ background-color: #ff4b4b; color: white; transform: scale(1); }}
+        50% {{ background-color: #ffd700; color: black; transform: scale(1.02); }}
+        100% {{ background-color: #ff4b4b; color: white; transform: scale(1); }}
+    }}
+    .banner-vincitore {{
+        animation: lampeggia 1.5s infinite;
+        padding: 15px;
+        text-align: center;
+        border-radius: 10px;
+        border: 2px solid #ffffff;
+        font-family: sans-serif;
+        margin-bottom: 25px;
+    }}
+    .banner-testo {{
+        margin: 0;
+        font-size: 22px;
+        font-weight: 900;
+        letter-spacing: 1px;
+    }}
+    </style>
+    
+    <div class="banner-vincitore">
+        <p class="banner-testo"> DOPO 16 GIORNATE QUEL CAZZONE DI {NOME_VINCITORE.upper()} VINCE PER LA PRIMA VOLTA</p>
+    </div>
+    """
+    st.markdown(banner_html, unsafe_allow_html=True)
 
 # --- 1. FUNZIONE DI ESTRAZIONE DAL SITO ---
 @st.cache_data 
@@ -108,7 +143,7 @@ def estrai_partite(url):
 
 # --- 2. GESTIONE DELLA SCHEDINA (LEGGE DA GOOGLE SHEETS) ---
 # CAMBIA QUESTO NUMERO OGNI SETTIMANA PER LA GRAFICA (E cambia la data in fondo!)
-NUMERO_GIORNATA = 15
+NUMERO_GIORNATA = 16
 st.info(f"Schedina della {NUMERO_GIORNATA}ª Giornata")
 
 try:
@@ -137,7 +172,7 @@ st.caption("Made By Esseba")
 st.caption("LUCIO MERDA")
 
 # --- IMPOSTA QUI LA DATA DI SCADENZA ---
-scadenza = datetime(2026, 8, 22, 17, 30, tzinfo=ZoneInfo("Europe/Rome"))
+scadenza = datetime(2026, 8, 29, 17, 30, tzinfo=ZoneInfo("Europe/Rome"))
 adesso = datetime.now(ZoneInfo("Europe/Rome"))
 
 # 1. Mostriamo un avviso testuale classico
