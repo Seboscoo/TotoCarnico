@@ -75,7 +75,7 @@ st.title("Totocalcio Carnico ")
 st.write("Inserisci i tuoi pronostici.")
 # --- INTERRUTTORE BANNER VINCITORE ---
 # Metti True se vuoi mostrare il banner, False per nasconderlo
-C_E_UN_VINCITORE = True
+C_E_UN_VINCITORE = False
 NOME_VINCITORE = "Tommaso di Biase" 
 
 if C_E_UN_VINCITORE:
@@ -145,7 +145,7 @@ def estrai_partite(url):
 
 # --- 2. GESTIONE DELLA SCHEDINA (LEGGE DA GOOGLE SHEETS) ---
 # CAMBIA QUESTO NUMERO OGNI SETTIMANA PER LA GRAFICA (E cambia la data in fondo!)
-NUMERO_GIORNATA = 16
+NUMERO_GIORNATA = 17
 st.info(f"Schedina della {NUMERO_GIORNATA}ª Giornata")
 
 try:
@@ -175,7 +175,7 @@ st.caption("LUCIO MERDA")
 
 
 # --- IMPOSTA QUI LA DATA DI SCADENZA ---
-scadenza = datetime(2026, 8, 29, 17, 30, tzinfo=ZoneInfo("Europe/Rome"))
+scadenza = datetime(2026, 9, 4, 20, 30, tzinfo=ZoneInfo("Europe/Rome"))
 adesso = datetime.now(ZoneInfo("Europe/Rome"))
 
 # 1. Mostriamo un avviso testuale classico
