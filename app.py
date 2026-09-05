@@ -137,7 +137,7 @@ st.caption("LUCIO MERDA")
 
 
 # --- IMPOSTA QUI LA DATA DI SCADENZA ---
-scadenza = datetime(2026, 9, 4, 20, 30, tzinfo=ZoneInfo("Europe/Rome"))
+scadenza = datetime(2026, 9, 5, 17, 00, tzinfo=ZoneInfo("Europe/Rome"))
 adesso = datetime.now(ZoneInfo("Europe/Rome"))
 
 # 1. Mostriamo un avviso testuale classico
