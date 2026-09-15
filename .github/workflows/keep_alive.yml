@@ -1,0 +1,19 @@
+name: Anti-Ibernazione Totocarnico
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
+
+jobs:
+  visita_sito:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Scarica i file
+        uses: actions/checkout@v3
+        
+      - name: Installa il simulatore di browser
+        run: pip install selenium
+        
+      - name: Esegue il finto utente
+        run: python sveglia.py
