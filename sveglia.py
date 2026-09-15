@@ -2,7 +2,7 @@ from selenium import webdriver
 import time
 
 # INSERISCI QUI SOTTO IL LINK DEL TUO SITO
-URL = https://totocarnico.streamlit.app/
+URL = "https://totocarnico.streamlit.app/"
 options = webdriver.ChromeOptions()
 options.add_argument('--headless') # Fa girare il browser in background
 
