@@ -107,7 +107,7 @@ def estrai_partite(url):
 
 # --- 2. GESTIONE DELLA SCHEDINA (LEGGE DA GOOGLE SHEETS) ---
 # CAMBIA QUESTO NUMERO OGNI SETTIMANA PER LA GRAFICA (E cambia la data in fondo!)
-NUMERO_GIORNATA = 18
+NUMERO_GIORNATA = 19
 st.info(f"Schedina della {NUMERO_GIORNATA}ª Giornata")
 
 try:
