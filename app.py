@@ -107,7 +107,7 @@ def estrai_partite(url):
 
 # --- 2. GESTIONE DELLA SCHEDINA (LEGGE DA GOOGLE SHEETS) ---
 # CAMBIA QUESTO NUMERO OGNI SETTIMANA PER LA GRAFICA (E cambia la data in fondo!)
-NUMERO_GIORNATA = 19
+NUMERO_GIORNATA = 20
 st.info(f"Schedina della {NUMERO_GIORNATA}ª Giornata")
 
 try:
@@ -137,7 +137,7 @@ st.caption("LUCIO MERDA")
 
 
 # --- IMPOSTA QUI LA DATA DI SCADENZA ---
-scadenza = datetime(2026, 9, 19, 16, 00, tzinfo=ZoneInfo("Europe/Rome"))
+scadenza = datetime(2026, 9, 26, 16, 00, tzinfo=ZoneInfo("Europe/Rome"))
 adesso = datetime.now(ZoneInfo("Europe/Rome"))
 
 # 1. Mostriamo un avviso testuale classico
